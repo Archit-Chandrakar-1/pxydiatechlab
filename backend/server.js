@@ -10,6 +10,8 @@ const jobRoutes = require('./routes/jobRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const clientRoutes = require('./routes/clientRoutes');
+const teamRoutes = require('./routes/teamRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -55,6 +57,8 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/clients', clientRoutes);
+app.use('/api/team', teamRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -77,6 +81,8 @@ app.get('/', (req, res) => {
       applications: '/api/applications',
       contacts: '/api/contacts',
       blogs: '/api/blogs',
+      clients: '/api/clients',
+      team: '/api/team',
       health: '/api/health'
     }
   });

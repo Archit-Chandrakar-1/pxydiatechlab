@@ -116,9 +116,45 @@ const validateBlog = (blog) => {
   return schema.validate(blog);
 };
 
+// Client validation schema
+const validateClient = (client) => {
+  const schema = Joi.object({
+    name: Joi.string().min(2).max(100).required(),
+    logoURL: Joi.string().uri().required(),
+    websiteURL: Joi.string().uri().required(),
+    description: Joi.string().max(500),
+    industry: Joi.string().max(100),
+    isActive: Joi.boolean().default(true),
+    featured: Joi.boolean().default(false),
+    addedBy: Joi.string().default('Admin')
+  });
+
+  return schema.validate(client);
+};
+
+// Team validation schema
+const validateTeam = (team) => {
+  const schema = Joi.object({
+    name: Joi.string().min(2).max(100).required(),
+    position: Joi.string().min(2).max(100).required(),
+    photoURL: Joi.string().uri().required(),
+    linkedinURL: Joi.string().uri().pattern(/^https?:\/\/(www\.)?linkedin\.com\/.*/).required().messages({
+      'string.pattern.base': 'Please enter a valid LinkedIn URL'
+    }),
+    bio: Joi.string().max(500),
+    isActive: Joi.boolean().default(true),
+    order: Joi.number().default(0),
+    addedBy: Joi.string().default('Admin')
+  });
+
+  return schema.validate(team);
+};
+
 module.exports = {
   validateJob,
   validateApplication,
   validateContact,
-  validateBlog
+  validateBlog,
+  validateClient,
+  validateTeam
 };

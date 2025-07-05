@@ -76,14 +76,16 @@ const Blogs = () => {
   };
 
   return (
-    <section id="blogs" className="py-20 bg-gradient-to-br from-gray-900 to-black">
+    <section id="blogs" className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-            Latest <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">Insights</span>
+        {/* Header */}
+        <div className="mb-16">
+          <div className="w-16 h-1 bg-red-500 mb-6"></div>
+          <h2 className="text-5xl lg:text-6xl font-bold text-white mb-4">
+            Latest Insights.
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Stay updated with the latest trends, insights, and best practices in technology and business solutions
+          <p className="text-red-500 text-lg font-medium uppercase tracking-wider">
+            STAY UPDATED WITH TRENDS AND BEST PRACTICES
           </p>
         </div>
 
@@ -94,8 +96,8 @@ const Blogs = () => {
               key={index}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 index === 0 
-                  ? 'bg-gradient-to-r from-red-600 to-red-800 text-white' 
-                  : 'bg-black/50 text-gray-300 hover:bg-red-600/20 hover:text-red-400 border border-red-900/30'
+                  ? 'bg-red-600 text-white' 
+                  : 'bg-transparent border border-gray-800 text-gray-300 hover:bg-red-600 hover:text-white hover:border-red-600'
               }`}
             >
               {category}
@@ -129,7 +131,7 @@ const Blogs = () => {
             {blogPosts.map((post, index) => (
               <div
                 key={index}
-                className="flex-none w-80 bg-black/50 backdrop-blur-sm rounded-xl overflow-hidden hover:bg-black/70 transition-all duration-300 transform hover:-translate-y-2 border border-red-900/30 hover:border-red-500/50 group"
+                className="flex-none w-80 bg-transparent border border-gray-800 rounded-xl overflow-hidden hover:bg-red-600 hover:border-red-600 transition-all duration-500 transform hover:-translate-y-2 group"
               >
                 <div className="relative h-48">
                   <img 
@@ -138,27 +140,27 @@ const Blogs = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-black/70 text-red-400 px-2 py-1 rounded text-xs font-medium">
+                    <span className="bg-black/70 text-red-400 group-hover:text-white px-2 py-1 rounded text-xs font-medium transition-colors duration-300">
                       {post.category}
                     </span>
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="flex items-center gap-4 text-xs text-gray-400 mb-3">
+                  <div className="flex items-center gap-4 text-xs text-gray-400 group-hover:text-white/80 mb-3 transition-colors duration-300">
                     <div className="flex items-center gap-1">
                       <Calendar size={12} />
                       <span>{new Date(post.date).toLocaleDateString()}</span>
                     </div>
                     <span>{post.readTime}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-3 line-clamp-2">{post.title}</h3>
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
+                  <h3 className="text-lg font-semibold text-white mb-3 line-clamp-2 group-hover:text-white transition-colors duration-300">{post.title}</h3>
+                  <p className="text-gray-300 group-hover:text-white/90 text-sm mb-4 line-clamp-3 transition-colors duration-300">{post.excerpt}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <User size={14} className="text-gray-400" />
-                      <span className="text-gray-400 text-sm">{post.author}</span>
+                      <User size={14} className="text-gray-400 group-hover:text-white/80 transition-colors duration-300" />
+                      <span className="text-gray-400 group-hover:text-white/80 text-sm transition-colors duration-300">{post.author}</span>
                     </div>
-                    <button className="flex items-center gap-1 text-red-400 text-sm font-medium hover:text-red-300 transition-colors duration-200 group-hover:gap-2">
+                    <button className="flex items-center gap-1 text-red-400 group-hover:text-white text-sm font-medium transition-all duration-200 group-hover:gap-2">
                       Read
                       <ArrowRight size={14} className="transition-all duration-200" />
                     </button>
@@ -171,7 +173,7 @@ const Blogs = () => {
 
         {/* Load More Button */}
         <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-red-600 to-red-800 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300">
+          <button className="bg-red-600 hover:bg-white text-white hover:text-red-600 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
             View All Articles
           </button>
         </div>

@@ -1,825 +1,1118 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Briefcase, 
   Users, 
-  Mail, 
+  Briefcase, 
+  MessageSquare, 
   FileText, 
+  Building2, 
+  UserCheck,
   Plus, 
   Edit, 
   Trash2, 
-  Download,
-  Search,
-  Filter,
-  Calendar,
+  Save, 
+  X,
+  Upload,
+  ExternalLink,
+  Linkedin,
   MapPin,
   Clock,
-  Building,
-  User,
-  Phone,
-  Eye
+  Award
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('jobs');
+  const [activeTab, setActiveTab] = useState('overview');
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [blogs, setBlogs] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(false);
-  
-  const [jobForm, setJobForm] = useState({
-    title: '',
-    department: '',
-    mode: 'On-site',
-    type: 'Full-time',
-    experience: '',
-    location: '',
-    description: '',
-    requirements: [],
-    benefits: [],
-    salary: {
-      min: '',
-      max: '',
-      currency: 'USD'
-    }
-  });
-  
-  const [blogForm, setBlogForm] = useState({
-    title: '',
-    content: '',
-    imageURL: '',
-    author: {
-      name: '',
-      email: '',
-      bio: ''
-    },
-    category: 'Company Updates',
-    tags: [],
-    status: 'Published'
-  });
+  const [editingItem, setEditingItem] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const API_BASE_URL = 'http://localhost:3001/api';
 
-  // Fetch data functions
-  const fetchJobs = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/jobs`);
-      const data = await response.json();
-      if (data.success) {
-        setJobs(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchApplications = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/applications`);
-      const data = await response.json();
-      if (data.success) {
-        setApplications(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching applications:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchContacts = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/contacts`);
-      const data = await response.json();
-      if (data.success) {
-        setContacts(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching contacts:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBlogs = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/blogs`);
-      const data = await response.json();
-      if (data.success) {
-        setBlogs(data.data);
-      }
-    } catch (error) {
-      console.error('Error fetching blogs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Load data when tab changes
+  // Fetch data based on active tab
   useEffect(() => {
-    switch (activeTab) {
-      case 'jobs':
-        fetchJobs();
-        break;
-      case 'applications':
-        fetchApplications();
-        break;
-      case 'contacts':
-        fetchContacts();
-        break;
-      case 'blogs':
-        fetchBlogs();
-        break;
-    }
+    fetchData();
   }, [activeTab]);
 
-  const handleJobSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/jobs`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...jobForm,
-          salary: {
-            min: jobForm.salary.min ? Number(jobForm.salary.min) : undefined,
-            max: jobForm.salary.max ? Number(jobForm.salary.max) : undefined,
-            currency: jobForm.salary.currency
-          }
-        }),
-      });
-      
-      const data = await response.json();
-      if (data.success) {
-        alert('Job created successfully!');
-        setJobForm({
-          title: '',
-          department: '',
-          mode: 'On-site',
-          type: 'Full-time',
-          experience: '',
-          location: '',
-          description: '',
-          requirements: [],
-          benefits: [],
-          salary: { min: '', max: '', currency: 'USD' }
-        });
-        fetchJobs(); // Refresh the jobs list
-      } else {
-        alert('Error creating job: ' + (data.message || 'Unknown error'));
+      switch (activeTab) {
+        case 'jobs':
+          const jobsRes = await fetch(`${API_BASE_URL}/jobs`);
+          const jobsData = await jobsRes.json();
+          if (jobsData.success) setJobs(jobsData.data);
+          break;
+        case 'applications':
+          const appsRes = await fetch(`${API_BASE_URL}/applications`);
+          const appsData = await appsRes.json();
+          if (appsData.success) setApplications(appsData.data);
+          break;
+        case 'contacts':
+          const contactsRes = await fetch(`${API_BASE_URL}/contacts`);
+          const contactsData = await contactsRes.json();
+          if (contactsData.success) setContacts(contactsData.data);
+          break;
+        case 'blogs':
+          const blogsRes = await fetch(`${API_BASE_URL}/blogs`);
+          const blogsData = await blogsRes.json();
+          if (blogsData.success) setBlogs(blogsData.data);
+          break;
+        case 'clients':
+          const clientsRes = await fetch(`${API_BASE_URL}/clients`);
+          const clientsData = await clientsRes.json();
+          if (clientsData.success) setClients(clientsData.data);
+          break;
+        case 'team':
+          const teamRes = await fetch(`${API_BASE_URL}/team`);
+          const teamData = await teamRes.json();
+          if (teamData.success) setTeamMembers(teamData.data);
+          break;
       }
     } catch (error) {
-      console.error('Error creating job:', error);
-      alert('Error creating job. Please try again.');
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBlogSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleDelete = async (id: string, type: string) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    
     try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/blogs`, {
-        method: 'POST',
+      const response = await fetch(`${API_BASE_URL}/${type}/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  const handleSave = async (data: any, type: string, isEdit: boolean = false) => {
+    try {
+      const url = isEdit ? `${API_BASE_URL}/${type}/${data._id}` : `${API_BASE_URL}/${type}`;
+      const method = isEdit ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(blogForm),
+        body: JSON.stringify(data),
       });
       
-      const data = await response.json();
-      if (data.success) {
-        alert('Blog created successfully!');
-        setBlogForm({
-          title: '',
-          content: '',
-          imageURL: '',
-          author: { name: '', email: '', bio: '' },
-          category: 'Company Updates',
-          tags: [],
-          status: 'Published'
-        });
-        fetchBlogs(); // Refresh the blogs list
-      } else {
-        alert('Error creating blog: ' + (data.message || 'Unknown error'));
+      if (response.ok) {
+        setEditingItem(null);
+        setShowForm(false);
+        fetchData();
       }
     } catch (error) {
-      console.error('Error creating blog:', error);
-      alert('Error creating blog. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('Error saving item:', error);
     }
   };
 
-  const handleDeleteJob = async (jobId: string) => {
-    if (window.confirm('Are you sure you want to delete this job?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/jobs/${jobId}`, {
-          method: 'DELETE',
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-          alert('Job deleted successfully!');
-          fetchJobs(); // Refresh the jobs list
-        } else {
-          alert('Error deleting job: ' + (data.message || 'Unknown error'));
-        }
-      } catch (error) {
-        console.error('Error deleting job:', error);
-        alert('Error deleting job. Please try again.');
-      }
-    }
-  };
-
-  const handleDeleteBlog = async (blogId: string) => {
-    if (window.confirm('Are you sure you want to delete this blog?')) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/blogs/${blogId}`, {
-          method: 'DELETE',
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-          alert('Blog deleted successfully!');
-          fetchBlogs(); // Refresh the blogs list
-        } else {
-          alert('Error deleting blog: ' + (data.message || 'Unknown error'));
-        }
-      } catch (error) {
-        console.error('Error deleting blog:', error);
-        alert('Error deleting blog. Please try again.');
-      }
-    }
-  };
-
-  const sidebarItems = [
-    { id: 'jobs', label: 'Jobs Management', icon: Briefcase },
-    { id: 'applications', label: 'Applications', icon: Users },
-    { id: 'contacts', label: 'Contact Submissions', icon: Mail },
-    { id: 'blogs', label: 'Blog Management', icon: FileText }
+  const tabs = [
+    { id: 'overview', label: 'Overview', icon: Users },
+    { id: 'jobs', label: 'Jobs', icon: Briefcase },
+    { id: 'applications', label: 'Applications', icon: UserCheck },
+    { id: 'contacts', label: 'Contacts', icon: MessageSquare },
+    { id: 'blogs', label: 'Blogs', icon: FileText },
+    { id: 'clients', label: 'Our Clients', icon: Building2 },
+    { id: 'team', label: 'Leadership Team', icon: Users },
   ];
 
+  // Job Form Component
+  const JobForm = ({ job, onSave, onCancel }: any) => {
+    const [formData, setFormData] = useState({
+      title: job?.title || '',
+      department: job?.department || '',
+      mode: job?.mode || 'On-site',
+      type: job?.type || 'Full-time',
+      experience: job?.experience || '',
+      location: job?.location || '',
+      description: job?.description || '',
+      requirements: job?.requirements || [''],
+      benefits: job?.benefits || [''],
+      salary: {
+        min: job?.salary?.min || '',
+        max: job?.salary?.max || '',
+        currency: job?.salary?.currency || 'USD'
+      },
+      isActive: job?.isActive ?? true,
+      applicationDeadline: job?.applicationDeadline ? new Date(job.applicationDeadline).toISOString().split('T')[0] : ''
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      const submitData = {
+        ...formData,
+        requirements: formData.requirements.filter(req => req.trim() !== ''),
+        benefits: formData.benefits.filter(benefit => benefit.trim() !== ''),
+        salary: {
+          ...formData.salary,
+          min: formData.salary.min ? Number(formData.salary.min) : undefined,
+          max: formData.salary.max ? Number(formData.salary.max) : undefined
+        },
+        applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline) : undefined
+      };
+      onSave(submitData);
+    };
+
+    const addRequirement = () => {
+      setFormData({
+        ...formData,
+        requirements: [...formData.requirements, '']
+      });
+    };
+
+    const removeRequirement = (index: number) => {
+      setFormData({
+        ...formData,
+        requirements: formData.requirements.filter((_, i) => i !== index)
+      });
+    };
+
+    const updateRequirement = (index: number, value: string) => {
+      const newRequirements = [...formData.requirements];
+      newRequirements[index] = value;
+      setFormData({
+        ...formData,
+        requirements: newRequirements
+      });
+    };
+
+    const addBenefit = () => {
+      setFormData({
+        ...formData,
+        benefits: [...formData.benefits, '']
+      });
+    };
+
+    const removeBenefit = (index: number) => {
+      setFormData({
+        ...formData,
+        benefits: formData.benefits.filter((_, i) => i !== index)
+      });
+    };
+
+    const updateBenefit = (index: number, value: string) => {
+      const newBenefits = [...formData.benefits];
+      newBenefits[index] = value;
+      setFormData({
+        ...formData,
+        benefits: newBenefits
+      });
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <h3 className="text-lg font-semibold mb-4">
+            {job ? 'Edit Job' : 'Add Job'}
+          </h3>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Job Title *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.department}
+                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Work Mode *</label>
+                <select
+                  required
+                  value={formData.mode}
+                  onChange={(e) => setFormData({ ...formData, mode: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="Remote">Remote</option>
+                  <option value="On-site">On-site</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Job Type *</label>
+                <select
+                  required
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="Full-time">Full-time</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Contract">Contract</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Freelance">Freelance</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Experience Required *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.experience}
+                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  placeholder="e.g., 2-5 years"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                rows={4}
+                placeholder="Describe the role and responsibilities..."
+              />
+            </div>
+
+            {/* Requirements */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Requirements</label>
+              {formData.requirements.map((requirement, index) => (
+                <div key={index} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={requirement}
+                    onChange={(e) => updateRequirement(index, e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Enter requirement..."
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeRequirement(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addRequirement}
+                className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1"
+              >
+                <Plus size={16} />
+                Add Requirement
+              </button>
+            </div>
+
+            {/* Benefits */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Benefits</label>
+              {formData.benefits.map((benefit, index) => (
+                <div key={index} className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={benefit}
+                    onChange={(e) => updateBenefit(index, e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Enter benefit..."
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeBenefit(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addBenefit}
+                className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1"
+              >
+                <Plus size={16} />
+                Add Benefit
+              </button>
+            </div>
+
+            {/* Salary */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Salary Range</label>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <input
+                    type="number"
+                    value={formData.salary.min}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      salary: { ...formData.salary, min: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Min salary"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="number"
+                    value={formData.salary.max}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      salary: { ...formData.salary, max: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                    placeholder="Max salary"
+                  />
+                </div>
+                <div>
+                  <select
+                    value={formData.salary.currency}
+                    onChange={(e) => setFormData({ 
+                      ...formData, 
+                      salary: { ...formData.salary, currency: e.target.value }
+                    })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="INR">INR</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Application Deadline</label>
+                <input
+                  type="date"
+                  value={formData.applicationDeadline}
+                  onChange={(e) => setFormData({ ...formData, applicationDeadline: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <div className="flex items-center pt-6">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  className="mr-2"
+                />
+                <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active Job Posting</label>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                <Save size={16} className="inline mr-2" />
+                Save Job
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                <X size={16} className="inline mr-2" />
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  // Team Member Form Component
+  const TeamMemberForm = ({ member, onSave, onCancel }: any) => {
+    const [formData, setFormData] = useState({
+      name: member?.name || '',
+      position: member?.position || '',
+      photoURL: member?.photoURL || '',
+      linkedinURL: member?.linkedinURL || '',
+      bio: member?.bio || '',
+      isActive: member?.isActive ?? true,
+      order: member?.order || 0
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      onSave(formData);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <h3 className="text-lg font-semibold mb-4">
+            {member ? 'Edit Team Member' : 'Add Team Member'}
+          </h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Position *</label>
+              <input
+                type="text"
+                required
+                value={formData.position}
+                onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL *</label>
+              <input
+                type="url"
+                required
+                value={formData.photoURL}
+                onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="https://example.com/photo.jpg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL *</label>
+              <input
+                type="url"
+                required
+                value={formData.linkedinURL}
+                onChange={(e) => setFormData({ ...formData, linkedinURL: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="https://linkedin.com/in/username"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+              <textarea
+                value={formData.bio}
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                rows={3}
+                placeholder="Brief bio (optional)"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
+              <input
+                type="number"
+                value={formData.order}
+                onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isActive"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="mr-2"
+              />
+              <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active</label>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                <Save size={16} className="inline mr-2" />
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                <X size={16} className="inline mr-2" />
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  // Client Form Component
+  const ClientForm = ({ client, onSave, onCancel }: any) => {
+    const [formData, setFormData] = useState({
+      name: client?.name || '',
+      logoURL: client?.logoURL || '',
+      websiteURL: client?.websiteURL || '',
+      description: client?.description || '',
+      industry: client?.industry || '',
+      isActive: client?.isActive ?? true,
+      featured: client?.featured || false
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      onSave(formData);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+          <h3 className="text-lg font-semibold mb-4">
+            {client ? 'Edit Client' : 'Add Client'}
+          </h3>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Logo URL *</label>
+              <input
+                type="url"
+                required
+                value={formData.logoURL}
+                onChange={(e) => setFormData({ ...formData, logoURL: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="https://example.com/logo.png"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Website URL *</label>
+              <input
+                type="url"
+                required
+                value={formData.websiteURL}
+                onChange={(e) => setFormData({ ...formData, websiteURL: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                placeholder="https://example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+              <input
+                type="text"
+                value={formData.industry}
+                onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                rows={3}
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                  className="mr-2"
+                />
+                <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Active</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="mr-2"
+                />
+                <label htmlFor="featured" className="text-sm font-medium text-gray-700">Featured</label>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              >
+                <Save size={16} className="inline mr-2" />
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={onCancel}
+                className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                <X size={16} className="inline mr-2" />
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 pt-16">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-black border-r border-gray-800 min-h-screen">
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-white mb-8">Admin Dashboard</h2>
+    <div className="min-h-screen bg-gray-100">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+              <p className="text-gray-600">Manage your Pyxidia Techlab content</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <a
+                href="/"
+                className="text-red-600 hover:text-red-700 font-medium"
+              >
+                ← Back to Website
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
+          {/* Sidebar */}
+          <div className="w-64 bg-white rounded-lg shadow-sm p-6">
             <nav className="space-y-2">
-              {sidebarItems.map((item) => (
+              {tabs.map((tab) => (
                 <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
-                    activeTab === item.id
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                    activeTab === tab.id
                       ? 'bg-red-600 text-white'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
-                  <item.icon size={20} />
-                  <span>{item.label}</span>
+                  <tab.icon size={20} />
+                  {tab.label}
                 </button>
               ))}
             </nav>
           </div>
-        </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-8">
-          {loading && (
-            <div className="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg">
-              Loading...
-            </div>
-          )}
-
-          {/* Jobs Management */}
-          {activeTab === 'jobs' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Jobs Management</h1>
-                <div className="flex gap-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      placeholder="Search jobs..."
-                      className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  <button className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                    <Filter size={20} />
-                    Filter
-                  </button>
-                </div>
-              </div>
-
-              {/* Add Job Form */}
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <h2 className="text-xl font-semibold text-white mb-6">Add New Job</h2>
-                <form onSubmit={handleJobSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Job Title"
-                      value={jobForm.title}
-                      onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Department"
-                      value={jobForm.department}
-                      onChange={(e) => setJobForm({ ...jobForm, department: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                    <select
-                      value={jobForm.type}
-                      onChange={(e) => setJobForm({ ...jobForm, type: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    >
-                      <option value="Full-time">Full-time</option>
-                      <option value="Part-time">Part-time</option>
-                      <option value="Contract">Contract</option>
-                      <option value="Internship">Internship</option>
-                      <option value="Freelance">Freelance</option>
-                    </select>
-                    <select
-                      value={jobForm.mode}
-                      onChange={(e) => setJobForm({ ...jobForm, mode: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    >
-                      <option value="On-site">On-site</option>
-                      <option value="Remote">Remote</option>
-                      <option value="Hybrid">Hybrid</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Location"
-                      value={jobForm.location}
-                      onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                    <input
-                      type="text"
-                      placeholder="Experience (e.g., 3+ years)"
-                      value={jobForm.experience}
-                      onChange={(e) => setJobForm({ ...jobForm, experience: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                  </div>
-                  <textarea
-                    placeholder="Job Description"
-                    value={jobForm.description}
-                    onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
-                    rows={4}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                  ></textarea>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input
-                      type="number"
-                      placeholder="Min Salary"
-                      value={jobForm.salary.min}
-                      onChange={(e) => setJobForm({ 
-                        ...jobForm, 
-                        salary: { ...jobForm.salary, min: e.target.value }
-                      })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Max Salary"
-                      value={jobForm.salary.max}
-                      onChange={(e) => setJobForm({ 
-                        ...jobForm, 
-                        salary: { ...jobForm.salary, max: e.target.value }
-                      })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
+          {/* Main Content */}
+          <div className="flex-1">
+            <div className="bg-white rounded-lg shadow-sm">
+              {/* Tab Header */}
+              <div className="border-b border-gray-200 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {tabs.find(tab => tab.id === activeTab)?.label}
+                  </h2>
+                  {(activeTab === 'jobs' || activeTab === 'clients' || activeTab === 'team') && (
                     <button
-                      type="submit"
-                      disabled={loading}
-                      className="flex items-center justify-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
+                      onClick={() => setShowForm(true)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
                     >
-                      <Plus size={20} />
-                      {loading ? 'Adding...' : 'Add Job'}
+                      <Plus size={16} />
+                      Add {activeTab === 'jobs' ? 'Job' : activeTab === 'clients' ? 'Client' : 'Team Member'}
                     </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Jobs Table */}
-              <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-700">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Job Title</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Department</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Type</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Mode</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Location</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Experience</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Posted</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-700">
-                      {jobs.map((job: any) => (
-                        <tr key={job._id} className="hover:bg-gray-750">
-                          <td className="px-6 py-4 text-white font-medium">{job.title}</td>
-                          <td className="px-6 py-4 text-gray-300">{job.department}</td>
-                          <td className="px-6 py-4">
-                            <span className="px-2 py-1 bg-blue-600 text-blue-100 rounded-full text-xs">
-                              {job.type}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="px-2 py-1 bg-green-600 text-green-100 rounded-full text-xs">
-                              {job.mode}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-gray-300">{job.location}</td>
-                          <td className="px-6 py-4 text-gray-300">{job.experience}</td>
-                          <td className="px-6 py-4 text-gray-300">
-                            {new Date(job.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button className="p-2 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-colors">
-                                <Edit size={16} />
-                              </button>
-                              <button 
-                                onClick={() => handleDeleteJob(job._id)}
-                                className="p-2 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition-colors"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {jobs.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      No jobs found. Add your first job above.
-                    </div>
                   )}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Applications */}
-          {activeTab === 'applications' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Candidate Applications</h1>
-                <div className="flex gap-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      placeholder="Search applications..."
-                      className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
+              {/* Tab Content */}
+              <div className="p-6">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="text-gray-500">Loading...</div>
                   </div>
-                  <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                    <Download size={20} />
-                    Export
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-700">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Candidate</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Job Applied</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Resume</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Message</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Applied Date</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-700">
-                      {applications.map((app: any) => (
-                        <tr key={app._id} className="hover:bg-gray-750">
-                          <td className="px-6 py-4">
+                ) : (
+                  <>
+                    {/* Overview Tab */}
+                    {activeTab === 'overview' && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
+                          <div className="flex items-center justify-between">
                             <div>
-                              <div className="text-white font-medium">{app.name}</div>
-                              <div className="text-gray-400 text-sm">{app.email}</div>
+                              <p className="text-blue-100">Total Jobs</p>
+                              <p className="text-3xl font-bold">{jobs.length}</p>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-gray-300">{app.job?.title || 'N/A'}</td>
-                          <td className="px-6 py-4">
-                            <a 
-                              href={app.resumeURL} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-2 text-blue-400 hover:text-blue-300"
+                            <Briefcase size={32} className="text-blue-200" />
+                          </div>
+                        </div>
+                        <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-green-100">Applications</p>
+                              <p className="text-3xl font-bold">{applications.length}</p>
+                            </div>
+                            <UserCheck size={32} className="text-green-200" />
+                          </div>
+                        </div>
+                        <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-purple-100">Contacts</p>
+                              <p className="text-3xl font-bold">{contacts.length}</p>
+                            </div>
+                            <MessageSquare size={32} className="text-purple-200" />
+                          </div>
+                        </div>
+                        <div className="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-6 text-white">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-red-100">Blog Posts</p>
+                              <p className="text-3xl font-bold">{blogs.length}</p>
+                            </div>
+                            <FileText size={32} className="text-red-200" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Jobs Tab */}
+                    {activeTab === 'jobs' && (
+                      <div>
+                        {jobs.length > 0 ? (
+                          <div className="space-y-4">
+                            {jobs.map((job: any) => (
+                              <div key={job._id} className="border border-gray-200 rounded-lg p-6">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-4 mb-2">
+                                      <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
+                                      <span className={`px-2 py-1 rounded-full text-xs ${
+                                        job.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                      }`}>
+                                        {job.isActive ? 'Active' : 'Inactive'}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
+                                      <div className="flex items-center gap-1">
+                                        <Briefcase size={16} />
+                                        <span>{job.department}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <MapPin size={16} />
+                                        <span>{job.location}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Clock size={16} />
+                                        <span>{job.type}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Award size={16} />
+                                        <span>{job.experience}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1">
+                                        <Users size={16} />
+                                        <span>{job.mode}</span>
+                                      </div>
+                                    </div>
+                                    {job.description && (
+                                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{job.description}</p>
+                                    )}
+                                    {job.salary && (job.salary.min || job.salary.max) && (
+                                      <p className="text-gray-600 text-sm">
+                                        Salary: {job.salary.min && `${job.salary.min.toLocaleString()}`}
+                                        {job.salary.min && job.salary.max && ' - '}
+                                        {job.salary.max && `${job.salary.max.toLocaleString()}`}
+                                        {job.salary.currency && ` ${job.salary.currency}`}
+                                      </p>
+                                    )}
+                                    {job.applicationDeadline && (
+                                      <p className="text-gray-600 text-sm">
+                                        Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-2 ml-4">
+                                    <button
+                                      onClick={() => {
+                                        setEditingItem(job);
+                                        setShowForm(true);
+                                      }}
+                                      className="text-blue-600 hover:text-blue-700 p-2"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDelete(job._id, 'jobs')}
+                                      className="text-red-600 hover:text-red-700 p-2"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <Briefcase size={48} className="mx-auto text-gray-400 mb-4" />
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">No jobs posted yet</h3>
+                            <p className="text-gray-600 mb-4">Create your first job posting to get started.</p>
+                            <button
+                              onClick={() => setShowForm(true)}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                             >
-                              <Download size={16} />
-                              View Resume
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-gray-300 max-w-xs truncate">{app.message || 'No message'}</td>
-                          <td className="px-6 py-4 text-gray-300">
-                            {new Date(app.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              app.status === 'Pending' ? 'bg-yellow-600 text-yellow-100' :
-                              app.status === 'Reviewed' ? 'bg-blue-600 text-blue-100' :
-                              app.status === 'Shortlisted' ? 'bg-green-600 text-green-100' :
-                              app.status === 'Rejected' ? 'bg-red-600 text-red-100' :
-                              'bg-gray-600 text-gray-100'
-                            }`}>
-                              {app.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button className="p-2 text-green-400 hover:bg-green-600 hover:text-white rounded-lg transition-colors">
-                                <Eye size={16} />
-                              </button>
-                              <button className="p-2 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition-colors">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {applications.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      No applications found.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Contact Submissions */}
-          {activeTab === 'contacts' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Contact Submissions</h1>
-                <div className="flex gap-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                    <input
-                      type="text"
-                      placeholder="Search contacts..."
-                      className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                    <Download size={20} />
-                    Export
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-gray-700">
-                      <tr>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Contact</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Company</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Service Interest</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Message</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Submitted</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-700">
-                      {contacts.map((contact: any) => (
-                        <tr key={contact._id} className="hover:bg-gray-750">
-                          <td className="px-6 py-4">
-                            <div>
-                              <div className="text-white font-medium">{contact.name}</div>
-                              <div className="text-gray-400 text-sm">{contact.email}</div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-gray-300">{contact.company || 'N/A'}</td>
-                          <td className="px-6 py-4 text-gray-300">{contact.serviceInterest || 'N/A'}</td>
-                          <td className="px-6 py-4 text-gray-300 max-w-xs truncate">{contact.message}</td>
-                          <td className="px-6 py-4 text-gray-300">
-                            {new Date(contact.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              contact.status === 'New' ? 'bg-blue-600 text-blue-100' :
-                              contact.status === 'In Progress' ? 'bg-yellow-600 text-yellow-100' :
-                              contact.status === 'Responded' ? 'bg-green-600 text-green-100' :
-                              'bg-gray-600 text-gray-100'
-                            }`}>
-                              {contact.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
-                              <button className="p-2 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-colors">
-                                <Eye size={16} />
-                              </button>
-                              <button className="p-2 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition-colors">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                  {contacts.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      No contact submissions found.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Blog Management */}
-          {activeTab === 'blogs' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Blog Management</h1>
-                <button className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                  <Plus size={20} />
-                  New Blog
-                </button>
-              </div>
-
-              {/* Add Blog Form */}
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <h2 className="text-xl font-semibold text-white mb-6">Create New Blog Post</h2>
-                <form onSubmit={handleBlogSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Blog Title"
-                      value={blogForm.title}
-                      onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                    <input
-                      type="url"
-                      placeholder="Featured Image URL"
-                      value={blogForm.imageURL}
-                      onChange={(e) => setBlogForm({ ...blogForm, imageURL: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Author Name"
-                      value={blogForm.author.name}
-                      onChange={(e) => setBlogForm({ 
-                        ...blogForm, 
-                        author: { ...blogForm.author, name: e.target.value }
-                      })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    />
-                    <input
-                      type="email"
-                      placeholder="Author Email"
-                      value={blogForm.author.email}
-                      onChange={(e) => setBlogForm({ 
-                        ...blogForm, 
-                        author: { ...blogForm.author, email: e.target.value }
-                      })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    />
-                    <select
-                      value={blogForm.category}
-                      onChange={(e) => setBlogForm({ ...blogForm, category: e.target.value })}
-                      className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                      required
-                    >
-                      <option value="AI & Technology">AI & Technology</option>
-                      <option value="Staffing">Staffing</option>
-                      <option value="Compliance">Compliance</option>
-                      <option value="IT Consulting">IT Consulting</option>
-                      <option value="BPO Services">BPO Services</option>
-                      <option value="Payroll">Payroll</option>
-                      <option value="Industry News">Industry News</option>
-                      <option value="Best Practices">Best Practices</option>
-                      <option value="Case Studies">Case Studies</option>
-                      <option value="Company Updates">Company Updates</option>
-                    </select>
-                  </div>
-                  <textarea
-                    placeholder="Blog Content"
-                    value={blogForm.content}
-                    onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
-                    rows={8}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                    required
-                  ></textarea>
-                  <div className="flex gap-4">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50"
-                    >
-                      {loading ? 'Publishing...' : 'Publish Blog'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setBlogForm({ ...blogForm, status: 'Draft' })}
-                      className="border border-gray-600 text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors font-semibold"
-                    >
-                      Save Draft
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Blogs List */}
-              <div className="grid gap-6">
-                {blogs.map((blog: any) => (
-                  <div key={blog._id} className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-semibold text-white">{blog.title}</h3>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            blog.status === 'Published' 
-                              ? 'bg-green-600 text-green-100' 
-                              : 'bg-yellow-600 text-yellow-100'
-                          }`}>
-                            {blog.status}
-                          </span>
-                        </div>
-                        <p className="text-gray-400 mb-3 line-clamp-3">{blog.excerpt || blog.content.substring(0, 200) + '...'}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Calendar size={14} />
-                            {new Date(blog.createdAt).toLocaleDateString()}
-                          </span>
-                          <span>By: {blog.author?.name || 'Unknown'}</span>
-                          <span>Category: {blog.category}</span>
-                          <span>Views: {blog.views || 0}</span>
-                        </div>
+                              Add Job
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex gap-2 ml-4">
-                        <button className="p-2 text-blue-400 hover:bg-blue-600 hover:text-white rounded-lg transition-colors">
-                          <Edit size={16} />
-                        </button>
-                        <button className="p-2 text-green-400 hover:bg-green-600 hover:text-white rounded-lg transition-colors">
-                          <Eye size={16} />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteBlog(blog._id)}
-                          className="p-2 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                    )}
+
+                    {/* Team Tab */}
+                    {activeTab === 'team' && (
+                      <div>
+                        {teamMembers.length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {teamMembers.map((member: any) => (
+                              <div key={member._id} className="border border-gray-200 rounded-lg p-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                  <img
+                                    src={member.photoURL}
+                                    alt={member.name}
+                                    className="w-16 h-16 rounded-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=300';
+                                    }}
+                                  />
+                                  <div>
+                                    <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                                    <p className="text-gray-600">{member.position}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <span className={`px-2 py-1 rounded-full text-xs ${
+                                        member.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                      }`}>
+                                        {member.isActive ? 'Active' : 'Inactive'}
+                                      </span>
+                                      <span className="text-xs text-gray-500">Order: {member.order}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                {member.bio && (
+                                  <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
+                                )}
+                                <div className="flex items-center justify-between">
+                                  <a
+                                    href={member.linkedinURL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm"
+                                  >
+                                    <Linkedin size={16} />
+                                    LinkedIn
+                                  </a>
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => {
+                                        setEditingItem(member);
+                                        setShowForm(true);
+                                      }}
+                                      className="text-blue-600 hover:text-blue-700"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDelete(member._id, 'team')}
+                                      className="text-red-600 hover:text-red-700"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <Users size={48} className="mx-auto text-gray-400 mb-4" />
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">No team members yet</h3>
+                            <p className="text-gray-600 mb-4">Add your first team member to get started.</p>
+                            <button
+                              onClick={() => setShowForm(true)}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                            >
+                              Add Team Member
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                ))}
-                {blogs.length === 0 && (
-                  <div className="text-center py-8 text-gray-400">
-                    No blogs found. Create your first blog above.
-                  </div>
+                    )}
+
+                    {/* Clients Tab */}
+                    {activeTab === 'clients' && (
+                      <div>
+                        {clients.length > 0 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {clients.map((client: any) => (
+                              <div key={client._id} className="border border-gray-200 rounded-lg p-6">
+                                <div className="flex items-center gap-4 mb-4">
+                                  <img
+                                    src={client.logoURL}
+                                    alt={client.name}
+                                    className="w-16 h-16 object-contain"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  <div>
+                                    <h3 className="font-semibold text-gray-900">{client.name}</h3>
+                                    {client.industry && (
+                                      <p className="text-gray-600">{client.industry}</p>
+                                    )}
+                                    <div className="flex items-center gap-2 mt-1">
+                                      <span className={`px-2 py-1 rounded-full text-xs ${
+                                        client.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                      }`}>
+                                        {client.isActive ? 'Active' : 'Inactive'}
+                                      </span>
+                                      {client.featured && (
+                                        <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                                          Featured
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                {client.description && (
+                                  <p className="text-gray-600 text-sm mb-4">{client.description}</p>
+                                )}
+                                <div className="flex items-center justify-between">
+                                  <a
+                                    href={client.websiteURL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm"
+                                  >
+                                    <ExternalLink size={16} />
+                                    Website
+                                  </a>
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => {
+                                        setEditingItem(client);
+                                        setShowForm(true);
+                                      }}
+                                      className="text-blue-600 hover:text-blue-700"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDelete(client._id, 'clients')}
+                                      className="text-red-600 hover:text-red-700"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8">
+                            <Building2 size={48} className="mx-auto text-gray-400 mb-4" />
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">No clients yet</h3>
+                            <p className="text-gray-600 mb-4">Add your first client to get started.</p>
+                            <button
+                              onClick={() => setShowForm(true)}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                            >
+                              Add Client
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Other tabs content would go here */}
+                    {activeTab !== 'overview' && activeTab !== 'jobs' && activeTab !== 'team' && activeTab !== 'clients' && (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">Content for {activeTab} tab coming soon...</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
+
+      {/* Forms */}
+      {showForm && activeTab === 'jobs' && (
+        <JobForm
+          job={editingItem}
+          onSave={(data: any) => handleSave(data, 'jobs', !!editingItem)}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingItem(null);
+          }}
+        />
+      )}
+
+      {showForm && activeTab === 'team' && (
+        <TeamMemberForm
+          member={editingItem}
+          onSave={(data: any) => handleSave(data, 'team', !!editingItem)}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingItem(null);
+          }}
+        />
+      )}
+
+      {showForm && activeTab === 'clients' && (
+        <ClientForm
+          client={editingItem}
+          onSave={(data: any) => handleSave(data, 'clients', !!editingItem)}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingItem(null);
+          }}
+        />
+      )}
     </div>
   );
 };
