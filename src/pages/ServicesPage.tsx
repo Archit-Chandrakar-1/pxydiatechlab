@@ -13,7 +13,7 @@ const ServicesPage = () => {
       description: 'Comprehensive regulatory compliance solutions to ensure your business meets all industry standards and requirements.',
       featured: true
     },
-    {
+    { 
       icon: Users,
       title: 'Contract Staffing',
       description: 'Flexible workforce solutions with skilled professionals to meet your project demands and business cycles.',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -17,14 +17,20 @@ const Footer = () => {
               A forward-thinking technology company specializing in innovative solutions that bridge the gap between cutting-edge technology and business success.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-red-400 transition-colors">
+              <a href="https://www.linkedin.com/company/pyxidiatechlab/" className="text-gray-400 hover:text-red-400 transition-colors">
                 <Linkedin size={20} />
               </a>
               <a href="#" className="text-gray-400 hover:text-red-400 transition-colors">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-red-400 transition-colors">
+              <a href="https://www.facebook.com/Pyxidiatech" className="text-gray-400 hover:text-red-400 transition-colors">
                 <Facebook size={20} />
+              </a>
+              <a href="https://www.instagram.com/pyxidia_techlab/" className="text-gray-400 hover:text-red-400 transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="https://www.youtube.com/@pyxidiatech" className="text-gray-400 hover:text-red-400 transition-colors">
+                <Youtube size={20} />
               </a>
             </div>
           </div>
@@ -63,15 +69,17 @@ const Footer = () => {
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-red-400" />
-                <span className="text-gray-400">info@pyxidiatechlab.com</span>
+                <span className="text-gray-400">business@pyxidiatech.com</span>
+                <span className="text-gray-400">career@pyxidiatech.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-red-400" />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400"> 0771- 65094</span>
+                <span className="text-gray-400">+91 93997 54876</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-red-400" />
-                <span className="text-gray-400">123 Tech Street, Innovation District</span>
+                <span className="text-gray-400">Second Floor,Tower, B, ZUDIO, Katoratalab Nirmal, 32, Shailendra Nagar, Raipur, Chhattisgarh 492001</span>
               </div>
             </div>
           </div>
@@ -79,7 +87,9 @@ const Footer = () => {
 
         <div className="border-t border-red-900/30 mt-8 pt-8 text-center">
           <p className="text-gray-400 text-sm">
-            © 2024 Pyxidia Techlab. All rights reserved.
+           © PYXIDIA TECHLAB LLP. All Rights Reserved.
+
+
           </p>
         </div>
       </div>
