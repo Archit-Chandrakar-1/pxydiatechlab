@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 
+interface Client {
+  _id: string;
+  name: string;
+  logoURL: string;
+  websiteURL: string;
+  industry: string;
+  featured: boolean;
+}
+
 const Clients = () => {
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
 
   const API_BASE_URL = 'http://localhost:3001/api';

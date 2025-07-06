@@ -1,13 +1,12 @@
-// AboutPage.tsx
 import React from 'react';
-import About from '../components/About'; // Adjust path if necessary
+import Careers from '../components/Careers'; // Adjust path if necessary
 
-const AboutPage = () => {
+const CareerPage = () => {
   return (
     <div className="min-h-screen bg-black pt-16"> {/* Add padding top for fixed header if you have one */}
-      <About />
+      <Careers />
     </div>
   );
 };
 
-export default AboutPage; 
+export default CareerPage;

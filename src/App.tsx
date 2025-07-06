@@ -4,7 +4,12 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import ServicesPage from './pages/ServicesPage';
+import AboutPage from './pages/AboutUs';
 import AdminDashboard from './pages/AdminDashboard';
+import ClientPage from './pages/ClientPage';
+import CareerPage from './pages/CareerPage';
+import BlogsPage from './pages/BlogPage';
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
@@ -18,6 +23,11 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/services" element={<ServicesPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/clients" element={<ClientPage />} />
+                <Route path="/careers" element={<CareerPage />} />
+                <Route path="/blogs" element={<BlogsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
               </Routes>
               <Footer />
             </>

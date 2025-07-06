@@ -1,13 +1,12 @@
-// AboutPage.tsx
 import React from 'react';
-import About from '../components/About'; // Adjust path if necessary
+import Clients from '../components/Clients'; // Adjust path if necessary
 
-const AboutPage = () => {
+const ClientPage = () => {
   return (
     <div className="min-h-screen bg-black pt-16"> {/* Add padding top for fixed header if you have one */}
-      <About />
+      <Clients />
     </div>
   );
 };
 
-export default AboutPage; 
+export default ClientPage;

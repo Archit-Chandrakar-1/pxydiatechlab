@@ -18,7 +18,7 @@ const Navbar = () => {
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== '/') {
       // If not on home page, navigate to home first then scroll
-      window.location.href = `/#${sectionId}`;
+      window.location.href = `/${sectionId}`;
       return;
     }
     
@@ -35,11 +35,11 @@ const Navbar = () => {
   const navItems = [
     { name: 'Home', action: () => scrollToSection('home') },
     { name: 'Services', path: '/services' },
-    { name: 'About', action: () => scrollToSection('about') },
-    { name: 'Clients', action: () => scrollToSection('clients') },
-    { name: 'Careers', action: () => scrollToSection('careers') },
-    { name: 'Blogs', action: () => scrollToSection('blogs') },
-    { name: 'Contact', action: () => scrollToSection('contact') }
+    { name: 'About', path: '/about' },
+    { name: 'Clients', path: '/clients' },
+    { name: 'Careers', path: '/careers' },
+    { name: 'Blogs', path: '/blogs' },
+    { name: 'Contact', path: '/contact' }
   ];
 
   return (

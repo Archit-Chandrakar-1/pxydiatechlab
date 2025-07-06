@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Zap, Globe, Users, Target, Eye, Heart, Linkedin, ExternalLink } from 'lucide-react';
 
+interface TeamMember {
+  _id: string;
+  name: string;
+  position: string;
+  photoURL: string;
+  linkedinURL: string;
+}
+
 const About = () => {
-  const [teamMembers, setTeamMembers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   const API_BASE_URL = 'http://localhost:3001/api';

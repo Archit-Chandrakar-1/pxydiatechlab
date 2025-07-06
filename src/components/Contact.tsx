@@ -45,7 +45,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Email</h3>
-                  <p className="text-gray-300">info@pyxidiatechlab.com</p>
+                  <p className="text-gray-300">business@pyxidiatech.com</p>
+                  <p className="text-gray-300">career@pyxidiatech.com</p>
                 </div>
               </div>
               
@@ -55,7 +56,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Phone</h3>
-                  <p className="text-gray-300">+1 (555) 123-4567</p>
+                  <p className="text-gray-300">+91 0771- 65094</p>
+                  <p className="text-gray-300">+91 93997 54876</p>
                 </div>
               </div>
               
@@ -65,7 +67,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-white">Office</h3>
-                  <p className="text-gray-300">123 Tech Street, Innovation District</p>
+                  <p className="text-gray-300">Second Floor,Tower, B, ZUDIO, Katoratalab Nirmal, 32, Shailendra Nagar, Raipur, Chhattisgarh 492001</p>
                 </div>
               </div>
             </div>
